@@ -29,6 +29,5 @@
   - [BorderRadius.circular()](https://github.com/MariaCaetanoRizzo/flutter_filme_1/wiki/Descri%C3%A7%C3%A3o-do-desenvolvimento#borderradiuscircular)
   - [BoxShadow](https://github.com/MariaCaetanoRizzo/flutter_filme_1/wiki/Descri%C3%A7%C3%A3o-do-desenvolvimento#boxshadow)
   - [ScrollController](https://github.com/MariaCaetanoRizzo/flutter_filme_1/wiki/Descri%C3%A7%C3%A3o-do-desenvolvimento#scrollcontroller)
-- [Aplicativo:](https://github.com/MariaCaetanoRizzo/MobileAmostraCultural/wiki/Descri%C3%A7%C3%A3o-do-desenvolvimento#aplicativo)
 - [Músicas Json](https://github.com/MariaCaetanoRizzo/flutter_filme_1/wiki/M%C3%BAsicas-Json)
 - [Personagens JSON](https://github.com/MariaCaetanoRizzo/flutter_filme_1/wiki/Personagens-Json)
