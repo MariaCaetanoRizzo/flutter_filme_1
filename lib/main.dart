@@ -20,7 +20,6 @@ class _MainAppState extends State<MainApp> {
   // =========================
   // CHAVES DAS SEÇÕES
   // =========================
-
   final GlobalKey _secaoHistoriaKey = GlobalKey();
   final GlobalKey _secaoElencoKey = GlobalKey();
   final GlobalKey _secaoCuriosidadesKey = GlobalKey();
@@ -29,57 +28,22 @@ class _MainAppState extends State<MainApp> {
   // =========================
   // DADOS DO ELENCO
   // =========================
-
   final List<Map<String, String>> _elencoDados = [
-    {
-      'nome': 'Personagem 1',
-      'ator': 'Ator 1',
-      'imagem': 'img/logo.png',
-    },
-    {
-      'nome': 'Personagem 2',
-      'ator': 'Ator 2',
-      'imagem': 'img/logo.png',
-    },
-    {
-      'nome': 'Personagem 3',
-      'ator': 'Ator 3',
-      'imagem': 'img/logo.png',
-    },
-    {
-      'nome': 'Personagem 4',
-      'ator': 'Ator 4',
-      'imagem': 'img/logo.png',
-    },
-    {
-      'nome': 'Personagem 5',
-      'ator': 'Ator 5',
-      'imagem': 'img/logo.png',
-    },
-    {
-      'nome': 'Personagem 6',
-      'ator': 'Ator 6',
-      'imagem': 'img/logo.png',
-    },
-    {
-      'nome': 'Personagem 7',
-      'ator': 'Ator 7',
-      'imagem': 'img/logo.png',
-    },
-    {
-      'nome': 'Personagem 8',
-      'ator': 'Ator 8',
-      'imagem': 'img/logo.png',
-    },
+    {'nome': 'Personagem 1', 'ator': 'Ator 1', 'imagem': 'img/logo.png'},
+    {'nome': 'Personagem 2', 'ator': 'Ator 2', 'imagem': 'img/logo.png'},
+    {'nome': 'Personagem 3', 'ator': 'Ator 3', 'imagem': 'img/logo.png'},
+    {'nome': 'Personagem 4', 'ator': 'Ator 4', 'imagem': 'img/logo.png'},
+    {'nome': 'Personagem 5', 'ator': 'Ator 5', 'imagem': 'img/logo.png'},
+    {'nome': 'Personagem 6', 'ator': 'Ator 6', 'imagem': 'img/logo.png'},
+    {'nome': 'Personagem 7', 'ator': 'Ator 7', 'imagem': 'img/logo.png'},
+    {'nome': 'Personagem 8', 'ator': 'Ator 8', 'imagem': 'img/logo.png'},
   ];
 
   // =========================
-  // PRÓXIMO PERSONAGEM
+  // NAVEGAÇÃO DO CAROUSEL
   // =========================
-
   void _proximoPersonagem() {
-    if (_indicePersonagemAtual <
-        _elencoDados.length - 1) {
+    if (_indicePersonagemAtual < _elencoDados.length - 1) {
       _pageController.nextPage(
         duration: const Duration(milliseconds: 400),
         curve: Curves.easeInOut,
@@ -92,10 +56,6 @@ class _MainAppState extends State<MainApp> {
       );
     }
   }
-
-  // =========================
-  // PERSONAGEM ANTERIOR
-  // =========================
 
   void _personagemAnterior() {
     if (_indicePersonagemAtual > 0) {
@@ -115,10 +75,8 @@ class _MainAppState extends State<MainApp> {
   // =========================
   // ROLAR ATÉ UMA SEÇÃO
   // =========================
-
   void _rolarParaSecao(GlobalKey key) {
     final BuildContext? context = key.currentContext;
-
     if (context != null) {
       Scrollable.ensureVisible(
         context,
@@ -136,28 +94,20 @@ class _MainAppState extends State<MainApp> {
     super.dispose();
   }
 
-  // =========================
-  // BUILD
-  // =========================
-
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-
       home: Scaffold(
-        backgroundColor: Colors.grey[300],
-
+        backgroundColor: Colors.grey,
+        
         // =========================
-        // APP BAR
+        // APP BAR (LIMITADA)
         // =========================
-
         appBar: AppBar(
-          backgroundColor:
-              const Color.fromARGB(255, 112, 32, 32),
-
+          backgroundColor: const Color.fromARGB(255, 112, 32, 32),
+          elevation: 0,
           centerTitle: true,
-
           title: const Text(
             'Querida, Encolhi as crianças',
             style: TextStyle(
@@ -166,54 +116,33 @@ class _MainAppState extends State<MainApp> {
               color: Colors.white,
             ),
           ),
-
-          // =========================
-          // MENU
-          // =========================
+          
+          flexibleSpace: Center(
+            child: ConstrainedBox(
+              constraints: const BoxConstraints(maxWidth: 450),
+              child: const SizedBox.expand(),
+            ),
+          ),
 
           bottom: PreferredSize(
-            preferredSize:
-                const Size.fromHeight(50),
-
-            child: SizedBox(
-              height: 50,
-
-              child: SingleChildScrollView(
-                scrollDirection: Axis.horizontal,
-
-                child: Row(
-                  mainAxisAlignment:
-                      MainAxisAlignment.center,
-
-                  children: [
-                    _botaoMenu(
-                      'História',
-                      () => _rolarParaSecao(
-                        _secaoHistoriaKey,
-                      ),
+            preferredSize: const Size.fromHeight(50),
+            child: Center(
+              child: ConstrainedBox(
+                constraints: const BoxConstraints(maxWidth: 450),
+                child: SizedBox(
+                  height: 50,
+                  child: SingleChildScrollView(
+                    scrollDirection: Axis.horizontal,
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        _botaoMenu('História', () => _rolarParaSecao(_secaoHistoriaKey)),
+                        _botaoMenu('Elenco', () => _rolarParaSecao(_secaoElencoKey)),
+                        _botaoMenu('Curiosidades', () => _rolarParaSecao(_secaoCuriosidadesKey)),
+                        _botaoMenu('Rapazes', () => _rolarParaSecao(_secaoRapazesKey)),
+                      ],
                     ),
-
-                    _botaoMenu(
-                      'Elenco',
-                      () => _rolarParaSecao(
-                        _secaoElencoKey,
-                      ),
-                    ),
-
-                    _botaoMenu(
-                      'Curiosidades',
-                      () => _rolarParaSecao(
-                        _secaoCuriosidadesKey,
-                      ),
-                    ),
-
-                    _botaoMenu(
-                      'Rapazes',
-                      () => _rolarParaSecao(
-                        _secaoRapazesKey,
-                      ),
-                    ),
-                  ],
+                  ),
                 ),
               ),
             ),
@@ -221,114 +150,58 @@ class _MainAppState extends State<MainApp> {
         ),
 
         // =========================
-        // CORPO
+        // CORPO DO APP
         // =========================
-
         body: Center(
           child: ConstrainedBox(
-            constraints: const BoxConstraints(
-              maxWidth: 450,
-            ),
-
+            constraints: const BoxConstraints(maxWidth: 450),
             child: SingleChildScrollView(
               controller: _scrollController,
-
               child: Column(
                 children: [
                   const SizedBox(height: 20),
-
-                  // =========================
-                  // CONTAINER PRINCIPAL
-                  // =========================
-
                   Container(
-                    margin:
-                        const EdgeInsets.symmetric(
-                      horizontal: 15,
-                    ),
-
-                    padding:
-                        const EdgeInsets.all(20),
-
+                    margin: const EdgeInsets.symmetric(horizontal: 15),
+                    padding: const EdgeInsets.all(20),
                     decoration: BoxDecoration(
-                      color: const Color.fromARGB(
-                        255,
-                        128,
-                        54,
-                        54,
-                      ),
-
-                      borderRadius:
-                          BorderRadius.circular(20),
-
+                      color: const Color.fromARGB(255, 128, 54, 54),
+                      borderRadius: BorderRadius.circular(20),
                       boxShadow: [
                         BoxShadow(
-                          color: Colors.black
-                              .withValues(alpha: 0.25),
-
+                          color: Colors.black.withValues(alpha: 0.25),
                           spreadRadius: 2,
                           blurRadius: 8,
-
-                          offset:
-                              const Offset(0, 4),
+                          offset: const Offset(0, 4),
                         ),
                       ],
                     ),
-
                     child: Column(
-                      crossAxisAlignment:
-                          CrossAxisAlignment.start,
-
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
+                        
                         // =========================
                         // CAPA
                         // =========================
-
                         Stack(
                           alignment: Alignment.center,
-
                           children: [
                             ClipRRect(
-                              borderRadius:
-                                  BorderRadius.circular(
-                                16,
-                              ),
-
+                              borderRadius: BorderRadius.circular(16),
                               child: Image.asset(
                                 'img/queridacapa.png',
-
-                                width:
-                                    double.infinity,
-
+                                width: double.infinity,
                                 height: 200,
-
                                 fit: BoxFit.cover,
                               ),
                             ),
-
-                            // ESCURECIMENTO
                             Container(
-                              width:
-                                  double.infinity,
-
+                              width: double.infinity,
                               height: 200,
-
-                              decoration:
-                                  BoxDecoration(
-                                color: Colors.black
-                                    .withValues(
-                                  alpha: 0.3,
-                                ),
-
-                                borderRadius:
-                                    BorderRadius
-                                        .circular(
-                                  16,
-                                ),
+                              decoration: BoxDecoration(
+                                color: Colors.black.withValues(alpha: 0.3),
+                                borderRadius: BorderRadius.circular(16),
                               ),
                             ),
-
-                            // LOGO
                             Image.asset(
                               'img/logo.png',
                               height: 90,
@@ -336,233 +209,101 @@ class _MainAppState extends State<MainApp> {
                             ),
                           ],
                         ),
-
                         const SizedBox(height: 30),
 
                         // =========================
-                        // HISTÓRIA
+                        // SEÇÃO HISTÓRIA
                         // =========================
-
                         Column(
                           key: _secaoHistoriaKey,
-
-                          crossAxisAlignment:
-                              CrossAxisAlignment.start,
-
+                          crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            _tituloSecao(
-                              'História',
-                            ),
-
+                            _tituloSecao('História'),
                             const SizedBox(height: 12),
-
                             Container(
-                              width:
-                                  double.infinity,
-
-                              padding:
-                                  const EdgeInsets.all(
-                                15,
-                              ),
-
-                              decoration:
-                                  BoxDecoration(
+                              width: double.infinity,
+                              padding: const EdgeInsets.all(15),
+                              decoration: BoxDecoration(
                                 color: Colors.red,
-
-                                borderRadius:
-                                    BorderRadius
-                                        .circular(
-                                  15,
-                                ),
+                                borderRadius: BorderRadius.circular(15),
                               ),
-
                               child: Column(
                                 children: [
                                   ClipRRect(
-                                    borderRadius:
-                                        BorderRadius
-                                            .circular(
-                                      12,
-                                    ),
-
-                                    child:
-                                        Image.asset(
-                                      'img/historia.png',
-
-                                      width:
-                                          double.infinity,
-
+                                    borderRadius: BorderRadius.circular(12),
+                                    child: Image.asset(
+                                      'img/logo.png',
+                                      width: double.infinity,
                                       height: 150,
-
                                       fit: BoxFit.cover,
                                     ),
                                   ),
-
-                                  const SizedBox(
-                                    height: 12,
-                                  ),
-
+                                  const SizedBox(height: 12),
                                   const Text(
-                                    'Conheça a história de '
-                                    'Querida, Encolhi as Crianças.',
-                                    style: TextStyle(
-                                      color:
-                                          Colors.white,
-                                      fontSize: 15,
-                                    ),
-                                    textAlign:
-                                        TextAlign.center,
+                                    'Conheça a história de Querida, Encolhi as Crianças.',
+                                    style: TextStyle(color: Colors.white, fontSize: 15),
+                                    textAlign: TextAlign.center,
                                   ),
-
-                                  const SizedBox(
-                                    height: 12,
-                                  ),
-
+                                  const SizedBox(height: 12),
                                   ElevatedButton(
                                     onPressed: () {
                                       Navigator.push(
                                         context,
-                                        MaterialPageRoute(
-                                          builder:
-                                              (context) =>
-                                                  const PaginaHistoria(),
-                                        ),
+                                        MaterialPageRoute(builder: (context) => const PaginaHistoria()),
                                       );
                                     },
-
-                                    child:
-                                        const Text(
-                                      'Saiba mais',
-                                    ),
+                                    child: const Text('Saiba mais'),
                                   ),
                                 ],
                               ),
                             ),
                           ],
                         ),
-
                         const SizedBox(height: 30),
 
                         // =========================
-                        // ELENCO
+                        // SEÇÃO ELENCO
                         // =========================
-
                         Column(
                           key: _secaoElencoKey,
-
-                          crossAxisAlignment:
-                              CrossAxisAlignment.start,
-
+                          crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            _tituloSecao(
-                              'Elenco',
-                            ),
-
+                            _tituloSecao('Elenco'),
                             const SizedBox(height: 12),
-
                             Row(
                               children: [
-                                // BOTÃO ANTERIOR
                                 IconButton(
-                                  onPressed:
-                                      _personagemAnterior,
-
-                                  icon: const Icon(
-                                    Icons
-                                        .arrow_back_ios,
-
-                                    size: 25,
-
-                                    color:
-                                        Colors.white,
-                                  ),
+                                  onPressed: _personagemAnterior,
+                                  icon: const Icon(Icons.arrow_back_ios, size: 25, color: Colors.white),
                                 ),
-
-                                // PAGE VIEW
                                 Expanded(
                                   child: SizedBox(
                                     height: 280,
-
-                                    child:
-                                        PageView.builder(
-                                      controller:
-                                          _pageController,
-
-                                      itemCount:
-                                          _elencoDados
-                                              .length,
-
-                                      onPageChanged:
-                                          (index) {
+                                    child: PageView.builder(
+                                      controller: _pageController,
+                                      itemCount: _elencoDados.length,
+                                      onPageChanged: (index) {
                                         setState(() {
-                                          _indicePersonagemAtual =
-                                              index;
+                                          _indicePersonagemAtual = index;
                                         });
                                       },
-
-                                      itemBuilder:
-                                          (context,
-                                              index) {
-                                        final personagem =
-                                            _elencoDados[
-                                                index];
-
+                                      itemBuilder: (context, index) {
+                                        final personagem = _elencoDados[index];
                                         return Column(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment
-                                                  .center,
-
+                                          mainAxisAlignment: MainAxisAlignment.center,
                                           children: [
-                                            _construirCardImagem(
-                                              personagem[
-                                                  'imagem']!,
-                                            ),
-
-                                            const SizedBox(
-                                              height: 12,
-                                            ),
-
+                                            _construirCardImagem(personagem['imagem']!),
+                                            const SizedBox(height: 12),
                                             Text(
-                                              personagem[
-                                                  'nome']!,
-
-                                              style:
-                                                  const TextStyle(
-                                                fontSize:
-                                                    18,
-
-                                                fontWeight:
-                                                    FontWeight
-                                                        .bold,
-
-                                                color: Colors
-                                                    .white,
-                                              ),
-
-                                              textAlign:
-                                                  TextAlign
-                                                      .center,
+                                              personagem['nome']!,
+                                              style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.white),
+                                              textAlign: TextAlign.center,
                                             ),
-
-                                            const SizedBox(
-                                              height: 4,
-                                            ),
-
+                                            const SizedBox(height: 4),
                                             Text(
                                               'Ator: ${personagem['ator']!}',
-
-                                              style:
-                                                  const TextStyle(
-                                                fontSize:
-                                                    14,
-
-                                                color: Colors
-                                                    .white70,
-                                              ),
-
-                                              textAlign:
-                                                  TextAlign
-                                                      .center,
+                                              style: const TextStyle(fontSize: 14, color: Colors.white70),
+                                              textAlign: TextAlign.center,
                                             ),
                                           ],
                                         );
@@ -570,266 +311,125 @@ class _MainAppState extends State<MainApp> {
                                     ),
                                   ),
                                 ),
-
-                                // BOTÃO PRÓXIMO
                                 IconButton(
-                                  onPressed:
-                                      _proximoPersonagem,
-
-                                  icon: const Icon(
-                                    Icons
-                                        .arrow_forward_ios,
-
-                                    size: 25,
-
-                                    color:
-                                        Colors.white,
-                                  ),
+                                  onPressed: _proximoPersonagem,
+                                  icon: const Icon(Icons.arrow_forward_ios, size: 25, color: Colors.white),
                                 ),
                               ],
                             ),
-
-                            const SizedBox(
-                              height: 5,
-                            ),
-
+                            const SizedBox(height: 5),
                             Center(
                               child: Text(
                                 '${_indicePersonagemAtual + 1} de ${_elencoDados.length}',
-
-                                style:
-                                    const TextStyle(
-                                  fontSize: 12,
-                                  color:
-                                      Colors.white60,
-                                ),
+                                style: const TextStyle(fontSize: 12, color: Colors.white60),
                               ),
                             ),
                           ],
                         ),
-
                         const SizedBox(height: 30),
 
                         // =========================
-                        // CURIOSIDADES
+                        // SEÇÃO CURIOSIDADES
                         // =========================
-
                         Column(
-                          key:
-                              _secaoCuriosidadesKey,
-
-                          crossAxisAlignment:
-                              CrossAxisAlignment.start,
-
+                          key: _secaoCuriosidadesKey,
+                          crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            _tituloSecao(
-                              'Curiosidades',
-                            ),
-
+                            _tituloSecao('Curiosidades'),
                             const SizedBox(height: 12),
-
                             Container(
-                              width:
-                                  double.infinity,
-
-                              padding:
-                                  const EdgeInsets.all(
-                                15,
+                              width: double.infinity,
+                              padding: const EdgeInsets.all(15),
+                              decoration: BoxDecoration(
+                                color: Colors.orange,
+                                borderRadius: BorderRadius.circular(15),
                               ),
-
-                              decoration:
-                                  BoxDecoration(
-                                color:
-                                    Colors.orange,
-
-                                borderRadius:
-                                    BorderRadius
-                                        .circular(
-                                  15,
-                                ),
-                              ),
-
                               child: Column(
                                 children: [
                                   ClipRRect(
-                                    borderRadius:
-                                        BorderRadius
-                                            .circular(
-                                      12,
-                                    ),
-
-                                    child:
-                                        Image.asset(
-                                      'img/curiosidades.png',
-
-                                      width:
-                                          double.infinity,
-
+                                    borderRadius: BorderRadius.circular(12),
+                                    child: Image.asset(
+                                      'img/logo.png',
+                                      width: double.infinity,
                                       height: 150,
-
                                       fit: BoxFit.cover,
                                     ),
                                   ),
-
-                                  const SizedBox(
-                                    height: 12,
-                                  ),
-
+                                  const SizedBox(height: 12),
                                   const Text(
-                                    'Descubra fatos interessantes '
-                                    'sobre o filme.',
-
-                                    style:
-                                        TextStyle(
-                                      color:
-                                          Colors.white,
-                                      fontSize: 15,
-                                    ),
-
-                                    textAlign:
-                                        TextAlign.center,
+                                    'Descubra fatos interessantes sobre o filme.',
+                                    style: TextStyle(color: Colors.white, fontSize: 15),
+                                    textAlign: TextAlign.center,
                                   ),
-
-                                  const SizedBox(
-                                    height: 12,
-                                  ),
-
+                                  const SizedBox(height: 12),
                                   ElevatedButton(
                                     onPressed: () {
                                       Navigator.push(
                                         context,
-                                        MaterialPageRoute(
-                                          builder:
-                                              (context) =>
-                                                  const PaginaCuriosidades(),
-                                        ),
+                                        MaterialPageRoute(builder: (context) => const PaginaCuriosidades()),
                                       );
                                     },
-
-                                    child:
-                                        const Text(
-                                      'Saiba mais',
-                                    ),
+                                    child: const Text('Saiba mais'),
                                   ),
                                 ],
                               ),
                             ),
                           ],
                         ),
-
                         const SizedBox(height: 30),
 
                         // =========================
-                        // RAPAZES
+                        // SEÇÃO RAPAZES
                         // =========================
-
                         Column(
                           key: _secaoRapazesKey,
-
-                          crossAxisAlignment:
-                              CrossAxisAlignment.start,
-
+                          crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            _tituloSecao(
-                              'Rapazes',
-                            ),
-
+                            _tituloSecao('Rapazes'),
                             const SizedBox(height: 12),
-
                             Container(
-                              width:
-                                  double.infinity,
-
-                              padding:
-                                  const EdgeInsets.all(
-                                15,
+                              width: double.infinity,
+                              padding: const EdgeInsets.all(15),
+                              decoration: BoxDecoration(
+                                color: Colors.purple,
+                                borderRadius: BorderRadius.circular(15),
                               ),
-
-                              decoration:
-                                  BoxDecoration(
-                                color:
-                                    Colors.purple,
-
-                                borderRadius:
-                                    BorderRadius
-                                        .circular(
-                                  15,
-                                ),
-                              ),
-
                               child: Column(
                                 children: [
                                   ClipRRect(
-                                    borderRadius:
-                                        BorderRadius
-                                            .circular(
-                                      12,
-                                    ),
-
-                                    child:
-                                        Image.asset(
-                                      'img/rapazes.png',
-
-                                      width:
-                                          double.infinity,
-
+                                    borderRadius: BorderRadius.circular(12),
+                                    child: Image.asset(
+                                      'img/logo.png',
+                                      width: double.infinity,
                                       height: 150,
-
                                       fit: BoxFit.cover,
                                     ),
                                   ),
-
-                                  const SizedBox(
-                                    height: 12,
-                                  ),
-
+                                  const SizedBox(height: 12),
                                   const Text(
-                                    'Conheça os personagens '
-                                    'e os rapazes do filme.',
-
-                                    style:
-                                        TextStyle(
-                                      color:
-                                          Colors.white,
-                                      fontSize: 15,
-                                    ),
-
-                                    textAlign:
-                                        TextAlign.center,
+                                    'Conheça os personagens e os rapazes do filme.',
+                                    style: TextStyle(color: Colors.white, fontSize: 15),
+                                    textAlign: TextAlign.center,
                                   ),
-
-                                  const SizedBox(
-                                    height: 12,
-                                  ),
-
+                                  const SizedBox(height: 12),
                                   ElevatedButton(
                                     onPressed: () {
                                       Navigator.push(
                                         context,
-                                        MaterialPageRoute(
-                                          builder:
-                                              (context) =>
-                                                  const PaginaRapazes(),
-                                        ),
+                                        MaterialPageRoute(builder: (context) => const PaginaRapazes()),
                                       );
                                     },
-
-                                    child:
-                                        const Text(
-                                      'Saiba mais',
-                                    ),
+                                    child: const Text('Saiba mais'),
                                   ),
                                 ],
                               ),
                             ),
                           ],
                         ),
-
                         const SizedBox(height: 20),
                       ],
                     ),
                   ),
-
                   const SizedBox(height: 20),
                 ],
               ),
@@ -841,84 +441,46 @@ class _MainAppState extends State<MainApp> {
   }
 
   // =========================
-  // BOTÃO DO MENU
+  // WIDGETS AUXILIARES
   // =========================
-
-  Widget _botaoMenu(
-    String texto,
-    VoidCallback onPressed,
-  ) {
+  Widget _botaoMenu(String texto, VoidCallback onPressed) {
     return TextButton(
       onPressed: onPressed,
-
       child: Text(
         texto,
-
-        style: const TextStyle(
-          color: Colors.white,
-          fontSize: 14,
-          fontWeight: FontWeight.bold,
-        ),
+        style: const TextStyle(color: Colors.white, fontSize: 14, fontWeight: FontWeight.bold),
       ),
     );
   }
-
-  // =========================
-  // TÍTULO DAS SEÇÕES
-  // =========================
 
   Widget _tituloSecao(String texto) {
     return Text(
       texto,
-
-      style: const TextStyle(
-        fontSize: 24,
-        fontWeight: FontWeight.bold,
-        color: Colors.white,
-      ),
+      style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: Colors.white),
     );
   }
 
-  // =========================
-  // CARD DO ELENCO
-  // =========================
-
-  Widget _construirCardImagem(
-    String path,
-  ) {
+  Widget _construirCardImagem(String path) {
     return Container(
       width: 170,
       height: 170,
-
       decoration: BoxDecoration(
-        borderRadius:
-            BorderRadius.circular(20),
-
+        borderRadius: BorderRadius.circular(20),
         boxShadow: [
           BoxShadow(
-            color: Colors.white.withValues(
-              alpha: 0.15,
-            ),
-
+            color: Colors.white.withValues(alpha: 0.15),
             spreadRadius: 1,
             blurRadius: 8,
-
-            offset:
-                const Offset(0, 4),
+            offset: const Offset(0, 4),
           ),
         ],
       ),
-
       child: ClipRRect(
-        borderRadius:
-            BorderRadius.circular(20),
-
+        borderRadius: BorderRadius.circular(20),
         child: Image.asset(
           path,
-
           width: 170,
           height: 170,
-
           fit: BoxFit.cover,
         ),
       ),
@@ -927,7 +489,7 @@ class _MainAppState extends State<MainApp> {
 }
 
 // ============================================================
-// PÁGINA DE HISTÓRIA
+// PÁGINAS SECUNDÁRIAS
 // ============================================================
 
 class PaginaHistoria extends StatelessWidget {
@@ -936,80 +498,29 @@ class PaginaHistoria extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.grey[300],
-
+      backgroundColor: Colors.grey,
       appBar: AppBar(
-        title: const Text(
-          'História',
-          style: TextStyle(
-            color: Colors.white,
-            fontWeight: FontWeight.bold,
-          ),
-        ),
-
-        backgroundColor:
-            const Color.fromARGB(
-          255,
-          112,
-          32,
-          32,
-        ),
+        title: const Text('História', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
+        backgroundColor: const Color.fromARGB(255, 112, 32, 32),
       ),
-
       body: Center(
         child: ConstrainedBox(
-          constraints: const BoxConstraints(
-            maxWidth: 450,
-          ),
-
+          constraints: const BoxConstraints(maxWidth: 450),
           child: SingleChildScrollView(
             padding: const EdgeInsets.all(20),
-
             child: Column(
-              crossAxisAlignment:
-                  CrossAxisAlignment.start,
-
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 ClipRRect(
-                  borderRadius:
-                      BorderRadius.circular(20),
-
-                  child: Image.asset(
-                    'img/historia.png',
-
-                    width:
-                        double.infinity,
-
-                    height: 220,
-
-                    fit: BoxFit.cover,
-                  ),
+                  borderRadius: BorderRadius.circular(20),
+                  child: Image.asset('img/logo.png', width: double.infinity, height: 220, fit: BoxFit.cover),
                 ),
-
                 const SizedBox(height: 20),
-
-                const Text(
-                  'História',
-
-                  style: TextStyle(
-                    fontSize: 28,
-                    fontWeight:
-                        FontWeight.bold,
-                  ),
-                ),
-
+                const Text('História', style: TextStyle(fontSize: 28, fontWeight: FontWeight.bold)),
                 const SizedBox(height: 12),
-
                 const Text(
-                  'Aqui você pode colocar a história '
-                  'completa de Querida, Encolhi as '
-                  'Crianças, contando todos os detalhes '
-                  'da aventura da família Szalinski.',
-
-                  style: TextStyle(
-                    fontSize: 17,
-                    height: 1.5,
-                  ),
+                  'Aqui você pode colocar a história completa de Querida, Encolhi as Crianças, contando todos os detalhes da aventura da família Szalinski.',
+                  style: TextStyle(fontSize: 17, height: 1.5),
                 ),
               ],
             ),
@@ -1020,91 +531,35 @@ class PaginaHistoria extends StatelessWidget {
   }
 }
 
-// ============================================================
-// PÁGINA DE CURIOSIDADES
-// ============================================================
-
-class PaginaCuriosidades
-    extends StatelessWidget {
+class PaginaCuriosidades extends StatelessWidget {
   const PaginaCuriosidades({super.key});
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.grey[300],
-
+      backgroundColor: Colors.grey,
       appBar: AppBar(
-        title: const Text(
-          'Curiosidades',
-          style: TextStyle(
-            color: Colors.white,
-            fontWeight: FontWeight.bold,
-          ),
-        ),
-
-        backgroundColor:
-            const Color.fromARGB(
-          255,
-          112,
-          32,
-          32,
-        ),
+        title: const Text('Curiosidades', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
+        backgroundColor: const Color.fromARGB(255, 112, 32, 32),
       ),
-
       body: Center(
         child: ConstrainedBox(
-          constraints: const BoxConstraints(
-            maxWidth: 450,
-          ),
-
+          constraints: const BoxConstraints(maxWidth: 450),
           child: SingleChildScrollView(
             padding: const EdgeInsets.all(20),
-
             child: Column(
-              crossAxisAlignment:
-                  CrossAxisAlignment.start,
-
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 ClipRRect(
-                  borderRadius:
-                      BorderRadius.circular(20),
-
-                  child: Image.asset(
-                    'img/curiosidades.png',
-
-                    width:
-                        double.infinity,
-
-                    height: 220,
-
-                    fit: BoxFit.cover,
-                  ),
+                  borderRadius: BorderRadius.circular(20),
+                  child: Image.asset('img/logo.png', width: double.infinity, height: 220, fit: BoxFit.cover),
                 ),
-
                 const SizedBox(height: 20),
-
-                const Text(
-                  'Curiosidades',
-
-                  style: TextStyle(
-                    fontSize: 28,
-                    fontWeight:
-                        FontWeight.bold,
-                  ),
-                ),
-
+                const Text('Curiosidades', style: TextStyle(fontSize: 28, fontWeight: FontWeight.bold)),
                 const SizedBox(height: 12),
-
                 const Text(
-                  'Aqui você pode colocar várias '
-                  'curiosidades sobre o filme, os '
-                  'atores, a produção, os efeitos '
-                  'especiais e as cenas mais marcantes.',
-
-                  style: TextStyle(
-                    fontSize: 17,
-                    height: 1.5,
-                  ),
+                  'Aqui você pode colocar várias curiosidades sobre o filme, os atores, a produção, os efeitos especiais e as cenas mais marcantes.',
+                  style: TextStyle(fontSize: 17, height: 1.5),
                 ),
               ],
             ),
@@ -1115,91 +570,35 @@ class PaginaCuriosidades
   }
 }
 
-// ============================================================
-// PÁGINA DOS RAPAZES
-// ============================================================
-
-class PaginaRapazes
-    extends StatelessWidget {
+class PaginaRapazes extends StatelessWidget {
   const PaginaRapazes({super.key});
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.grey[300],
-
+      backgroundColor: Colors.grey,
       appBar: AppBar(
-        title: const Text(
-          'Rapazes',
-          style: TextStyle(
-            color: Colors.white,
-            fontWeight: FontWeight.bold,
-          ),
-        ),
-
-        backgroundColor:
-            const Color.fromARGB(
-          255,
-          112,
-          32,
-          32,
-        ),
+        title: const Text('Rapazes', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
+        backgroundColor: const Color.fromARGB(255, 112, 32, 32),
       ),
-
       body: Center(
         child: ConstrainedBox(
-          constraints: const BoxConstraints(
-            maxWidth: 450,
-          ),
-
+          constraints: const BoxConstraints(maxWidth: 450),
           child: SingleChildScrollView(
             padding: const EdgeInsets.all(20),
-
             child: Column(
-              crossAxisAlignment:
-                  CrossAxisAlignment.start,
-
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 ClipRRect(
-                  borderRadius:
-                      BorderRadius.circular(20),
-
-                  child: Image.asset(
-                    'img/rapazes.png',
-
-                    width:
-                        double.infinity,
-
-                    height: 220,
-
-                    fit: BoxFit.cover,
-                  ),
+                  borderRadius: BorderRadius.circular(20),
+                  child: Image.asset('img/logo.png', width: double.infinity, height: 220, fit: BoxFit.cover),
                 ),
-
                 const SizedBox(height: 20),
-
-                const Text(
-                  'Rapazes',
-
-                  style: TextStyle(
-                    fontSize: 28,
-                    fontWeight:
-                        FontWeight.bold,
-                  ),
-                ),
-
+                const Text('Rapazes', style: TextStyle(fontSize: 28, fontWeight: FontWeight.bold)),
                 const SizedBox(height: 12),
-
                 const Text(
-                  'Aqui você pode apresentar os '
-                  'personagens masculinos do filme, '
-                  'suas características, personalidades '
-                  'e informações sobre cada um deles.',
-
-                  style: TextStyle(
-                    fontSize: 17,
-                    height: 1.5,
-                  ),
+                  'Aqui você pode apresentar os personagens masculinos do filme, suas características, personalidades e informações sobre cada um deles.',
+                  style: TextStyle(fontSize: 17, height: 1.5),
                 ),
               ],
             ),
@@ -1209,4 +608,3 @@ class PaginaRapazes
     );
   }
 }
-
