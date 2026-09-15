@@ -1,0 +1,66 @@
+[
+  {
+    "id": 1,
+    "nome": "Wayne Szalinski",
+    "ator": "Rick Moranis",
+    "descricao": "Um inventor e cientista que cria a máquina de encolhimento. Depois do acidente, ele tenta descobrir o que aconteceu com seus filhos.",
+    "principal": true,
+    "imagem": "https://static-wikia-nocookie-net.translate.goog/disney/images/2/24/Wayne_Szalinski_HWSO.png/revision/latest?cb=20150503065207&_x_tr_sl=en&_x_tr_tl=pt&_x_tr_hl=pt&_x_tr_pto=tc"
+  },
+  {
+    "id": 2,
+    "nome": "Diane Szalinski",
+    "ator": "Marcia Strassman",
+    "descricao": "Esposa de Wayne e mãe de Amy e Nick, que ajuda na busca pelas crianças.",
+    "principal": true,
+    "imagem": "https://static.wikia.nocookie.net/disney/images/2/21/Diane_in_Honey%2C_I_Blew_Up_the_Kid_%282%29.jpg/revision/latest?cb=20230905214446"
+  },
+  {
+    "id": 3,
+    "nome": "Nick Szalinski",
+    "ator": "Robert Oliveri",
+    "descricao": "Filho de Wayne e uma das crianças encolhidas. Ele ajuda o grupo a sobreviver aos perigos do jardim.",
+    "principal": true,
+    "imagem": "https://static.wikia.nocookie.net/disney/images/5/50/Nick_Szalinski.png/revision/latest?cb=20150504051341"
+  },
+  {
+    "id": 4,
+    "nome": "Amy Szalinski",
+    "ator": "Amy O'Neill",
+    "descricao": "Filha de Wayne que acaba sendo encolhida junto com as outras crianças.",
+    "principal": true,
+    "imagem": "https://static-wikia-nocookie-net.translate.goog/disney/images/e/e0/Amy_Szalinski.png/revision/latest?cb=20150504043601&_x_tr_sl=en&_x_tr_tl=pt&_x_tr_hl=pt&_x_tr_pto=tc"
+  },
+  {
+    "id": 5,
+    "nome": "Russ Thompson Jr.",
+    "ator": "Thomas Wilson Brown",
+    "descricao": "Filho mais velho da família Thompson e uma das crianças afetadas pelo acidente.",
+    "principal": true,
+    "imagem": "https://static-wikia-nocookie-net.translate.goog/disney/images/d/d2/Katrina-stagg-moviepilot.jpg/revision/latest?cb=20161215025940&_x_tr_sl=en&_x_tr_tl=pt&_x_tr_hl=pt&_x_tr_pto=tc"
+  },
+  {
+    "id": 6,
+    "nome": "Ron Thompson",
+    "ator": "Jared Rushton",
+    "descricao": "Filho mais novo dos Thompson, que acompanha as outras crianças durante a aventura.",
+    "principal": true,
+    "imagem": "https://static.wikia.nocookie.net/disney/images/9/96/H-68.jpg/revision/latest?cb=20110130235831"
+  },
+  {
+    "id": 8,
+    "nome": "Russ Thompson Sr.",
+    "ator": "Matt Frewer",
+    "descricao": "Pai de Russ e Ron Thompson e vizinho dos Szalinski.",
+    "principal": false,
+    "imagem": "https://static.wikia.nocookie.net/disney/images/c/c1/Matt-Frewer-Russ-Thompson-Sr.jpg/revision/latest?cb=20140409021648"
+  },
+  {
+    "id": 9,
+    "nome": "Mae Thompson",
+    "ator": "Kristine Sutherland",
+    "descricao": "Mãe de Russ e Ron Thompson e esposa de Russ Thompson.",
+    "principal": false,
+    "imagem": ""
+  }
+]
