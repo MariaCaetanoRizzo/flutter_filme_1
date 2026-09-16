@@ -1,4 +1,7 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 void main() {
   runApp(const MainApp());
@@ -14,34 +17,46 @@ class MainApp extends StatefulWidget {
 class _MainAppState extends State<MainApp> {
   final ScrollController _scrollController = ScrollController();
   final PageController _pageController = PageController();
-
+  final GlobalKey<NavigatorState> _navigatorKey = GlobalKey<NavigatorState>();
   int _indicePersonagemAtual = 0;
+  bool _carregandoElenco = true;
+  String? _erroElenco;
 
-  // =========================
-  // CHAVES DAS SEÇÕES
-  // =========================
+  // As 4 chaves necessárias para a rolagem automática
   final GlobalKey _secaoHistoriaKey = GlobalKey();
   final GlobalKey _secaoElencoKey = GlobalKey();
   final GlobalKey _secaoCuriosidadesKey = GlobalKey();
   final GlobalKey _secaoRapazesKey = GlobalKey();
 
-  // =========================
-  // DADOS DO ELENCO
-  // =========================
-  final List<Map<String, String>> _elencoDados = [
-    {'nome': 'Personagem 1', 'ator': 'Ator 1', 'imagem': 'img/logo.png'},
-    {'nome': 'Personagem 2', 'ator': 'Ator 2', 'imagem': 'img/logo.png'},
-    {'nome': 'Personagem 3', 'ator': 'Ator 3', 'imagem': 'img/logo.png'},
-    {'nome': 'Personagem 4', 'ator': 'Ator 4', 'imagem': 'img/logo.png'},
-    {'nome': 'Personagem 5', 'ator': 'Ator 5', 'imagem': 'img/logo.png'},
-    {'nome': 'Personagem 6', 'ator': 'Ator 6', 'imagem': 'img/logo.png'},
-    {'nome': 'Personagem 7', 'ator': 'Ator 7', 'imagem': 'img/logo.png'},
-    {'nome': 'Personagem 8', 'ator': 'Ator 8', 'imagem': 'img/logo.png'},
-  ];
+  // Dados dos 8 personagens para o carrossel animado
+  List<Map<String, dynamic>> _elencoDados = [];
 
-  // =========================
-  // NAVEGAÇÃO DO CAROUSEL
-  // =========================
+  @override
+  void initState() {
+    super.initState();
+    _carregarElenco();
+  }
+
+  Future<void> _carregarElenco() async {
+    try {
+      final arquivo = await rootBundle.loadString('json/arquivo.json');
+      final dados = jsonDecode(arquivo) as List<dynamic>;
+      if (!mounted) return;
+      setState(() {
+        _elencoDados = dados
+            .map((personagem) => Map<String, dynamic>.from(personagem as Map))
+            .toList();
+        _carregandoElenco = false;
+      });
+    } catch (erro) {
+      if (!mounted) return;
+      setState(() {
+        _erroElenco = 'Não foi possível carregar o elenco: ${erro.toString()}';
+        _carregandoElenco = false;
+      });
+    }
+  }
+
   void _proximoPersonagem() {
     if (_indicePersonagemAtual < _elencoDados.length - 1) {
       _pageController.nextPage(
@@ -72,19 +87,21 @@ class _MainAppState extends State<MainApp> {
     }
   }
 
-  // =========================
-  // ROLAR ATÉ UMA SEÇÃO
-  // =========================
   void _rolarParaSecao(GlobalKey key) {
-    final BuildContext? context = key.currentContext;
+    final context = key.currentContext;
     if (context != null) {
       Scrollable.ensureVisible(
         context,
-        duration: const Duration(milliseconds: 800),
+        duration: const Duration(seconds: 1),
         curve: Curves.easeInOut,
-        alignment: 0.05,
       );
     }
+  }
+
+  void _navegarParaPagina(Widget pagina) {
+    _navigatorKey.currentState?.push(
+      MaterialPageRoute(builder: (context) => pagina),
+    );
   }
 
   @override
@@ -98,65 +115,578 @@ class _MainAppState extends State<MainApp> {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      home: Scaffold(
-        backgroundColor: Colors.grey,
-        
-        // =========================
-        // APP BAR (LIMITADA)
-        // =========================
-        appBar: AppBar(
-          backgroundColor: const Color.fromARGB(255, 112, 32, 32),
-          elevation: 0,
-          centerTitle: true,
-          title: const Text(
-            'Querida, Encolhi as crianças',
-            style: TextStyle(
-              fontSize: 20,
-              fontWeight: FontWeight.bold,
-              color: Colors.white,
-            ),
-          ),
-          
-          flexibleSpace: Center(
-            child: ConstrainedBox(
-              constraints: const BoxConstraints(maxWidth: 450),
-              child: const SizedBox.expand(),
-            ),
-          ),
-
-          bottom: PreferredSize(
-            preferredSize: const Size.fromHeight(50),
-            child: Center(
-              child: ConstrainedBox(
-                constraints: const BoxConstraints(maxWidth: 450),
-                child: SizedBox(
-                  height: 50,
+      navigatorKey: _navigatorKey,
+      home: Container(
+        color: Colors.grey,
+        child: Center(
+          child: SizedBox(
+            width: 450,
+            child: Scaffold(
+              appBar: AppBar(
+                backgroundColor: const Color.fromARGB(255, 112, 32, 32),
+                centerTitle: true,
+                title: const Text(
+                  'Querida, Encolhi as crianças',
+                  style: TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
+                    color: Color.fromARGB(255, 168, 98, 98),
+                  ),
+                ),
+                bottom: PreferredSize(
+                  preferredSize: const Size.fromHeight(50.0),
                   child: SingleChildScrollView(
                     scrollDirection: Axis.horizontal,
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        _botaoMenu('História', () => _rolarParaSecao(_secaoHistoriaKey)),
-                        _botaoMenu('Elenco', () => _rolarParaSecao(_secaoElencoKey)),
-                        _botaoMenu('Curiosidades', () => _rolarParaSecao(_secaoCuriosidadesKey)),
-                        _botaoMenu('Rapazes', () => _rolarParaSecao(_secaoRapazesKey)),
+                        TextButton(
+                          onPressed: () =>
+                              _navegarParaPagina(const HistoriaPage()),
+                          child: const Text(
+                            'História',
+                            style: TextStyle(color: Colors.white),
+                          ),
+                        ),
+                        TextButton(
+                          onPressed: () => _rolarParaSecao(_secaoElencoKey),
+                          child: const Text(
+                            'Elenco',
+                            style: TextStyle(color: Colors.white),
+                          ),
+                        ),
+                        TextButton(
+                          onPressed: () =>
+                              _navegarParaPagina(const CuriosidadesPage()),
+                          child: const Text(
+                            'Curiosidades',
+                            style: TextStyle(color: Colors.white),
+                          ),
+                        ),
+                        TextButton(
+                          onPressed: () =>
+                              _navegarParaPagina(const RapazesPage()),
+                          child: const Text(
+                            'Rapazes',
+                            style: TextStyle(color: Colors.white),
+                          ),
+                        ),
                       ],
                     ),
                   ),
                 ),
               ),
+              body: SingleChildScrollView(
+                controller: _scrollController,
+                child: Column(
+                  children: [
+                    const SizedBox(height: 20),
+                    Container(
+                      margin: const EdgeInsets.symmetric(horizontal: 15),
+                      padding: const EdgeInsets.all(20),
+                      decoration: BoxDecoration(
+                        color: const Color.fromARGB(255, 128, 54, 54),
+                        borderRadius: BorderRadius.circular(20),
+                        boxShadow: [
+                          BoxShadow(
+                            color: const Color.fromARGB(
+                              255,
+                              4,
+                              25,
+                              71,
+                            ).withOpacity(0.5),
+                            spreadRadius: 2,
+                            blurRadius: 5,
+                          ),
+                        ],
+                      ),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Stack(
+                            alignment: Alignment.center,
+                            children: [
+                              ClipRRect(
+                                borderRadius: BorderRadius.circular(16.0),
+                                child: Image.asset(
+                                  'img/queridacapa.png',
+                                  width: double.infinity,
+                                  height: 200,
+                                  fit: BoxFit.cover,
+                                ),
+                              ),
+                              Container(
+                                height: 200,
+                                decoration: BoxDecoration(
+                                  color: Colors.black.withOpacity(0.3),
+                                  borderRadius: BorderRadius.circular(16.0),
+                                ),
+                              ),
+                              Image.asset(
+                                'img/logo.png',
+                                height: 90,
+                                fit: BoxFit.contain,
+                              ),
+                            ],
+                          ),
+                          const SizedBox(height: 25),
+
+                          // Seção História
+                          Column(
+                            key: _secaoHistoriaKey,
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              const Text(
+                                'História',
+                                style: TextStyle(
+                                  fontSize: 24,
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.white,
+                                ),
+                              ),
+                              const SizedBox(height: 12),
+
+                              // --- SUBSTITUÍDO O CONTEÚDO PELA IMAGEM EXATA ---
+                              ClipRRect(
+                                borderRadius: BorderRadius.circular(12),
+                                child: Image.asset(
+                                  'img/history.png',
+                                  height: 200,
+                                  width: double.infinity,
+                                  fit: BoxFit.cover,
+                                ),
+                              ),
+                              const SizedBox(height: 16),
+                              SizedBox(
+                                width: double.infinity,
+                                child: ElevatedButton(
+                                  style: ElevatedButton.styleFrom(
+                                    backgroundColor: const Color.fromARGB(
+                                      255,
+                                      236,
+                                      17,
+                                      17,
+                                    ),
+                                    foregroundColor: Colors.white,
+                                    padding: const EdgeInsets.symmetric(
+                                      vertical: 14,
+                                    ),
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(8),
+                                    ),
+                                  ),
+                                  onPressed: () =>
+                                      _navegarParaPagina(const HistoriaPage()),
+                                  child: const Text(
+                                    'Ver Mais História',
+                                    style: TextStyle(
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                          const SizedBox(height: 30),
+
+                          // Seção Elenco
+                          Column(
+                            key: _secaoElencoKey,
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              const Text(
+                                'Elenco',
+                                style: TextStyle(
+                                  fontSize: 24,
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.white,
+                                ),
+                              ),
+                              const SizedBox(height: 12),
+                              if (_carregandoElenco)
+                                const SizedBox(
+                                  height: 280,
+                                  child: Center(
+                                    child: CircularProgressIndicator(
+                                      color: Colors.white,
+                                    ),
+                                  ),
+                                )
+                              else if (_erroElenco != null)
+                                SizedBox(
+                                  height: 280,
+                                  child: Center(
+                                    child: Text(
+                                      _erroElenco!,
+                                      style: const TextStyle(
+                                        color: Colors.white,
+                                        fontSize: 16,
+                                      ),
+                                      textAlign: TextAlign.center,
+                                    ),
+                                  ),
+                                )
+                              else
+                                Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    IconButton(
+                                      icon: const Icon(
+                                        Icons.arrow_back_ios,
+                                        size: 25,
+                                        color: Colors.white,
+                                      ),
+                                      onPressed: _personagemAnterior,
+                                    ),
+                                    Expanded(
+                                      child: SizedBox(
+                                        height: 280,
+                                        child: PageView.builder(
+                                          controller: _pageController,
+                                          itemCount: _elencoDados.length,
+                                          onPageChanged: (index) {
+                                            setState(() {
+                                              _indicePersonagemAtual = index;
+                                            });
+                                          },
+                                          itemBuilder: (context, index) {
+                                            final personagem =
+                                                _elencoDados[index];
+                                            return Column(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment.center,
+                                              children: [
+                                                _construirCardImagem(
+                                                  personagem['imagem']
+                                                      as String?,
+                                                ),
+                                                const SizedBox(height: 12),
+                                                Text(
+                                                  personagem['nome'] as String,
+                                                  style: const TextStyle(
+                                                    fontSize: 18,
+                                                    fontWeight: FontWeight.bold,
+                                                    color: Colors.white,
+                                                  ),
+                                                  textAlign: TextAlign.center,
+                                                ),
+                                                Text(
+                                                  'Ator: ${personagem['ator'] as String}',
+                                                  style: const TextStyle(
+                                                    fontSize: 14,
+                                                    color: Colors.white70,
+                                                  ),
+                                                  textAlign: TextAlign.center,
+                                                ),
+                                              ],
+                                            );
+                                          },
+                                        ),
+                                      ),
+                                    ),
+                                    IconButton(
+                                      icon: const Icon(
+                                        Icons.arrow_forward_ios,
+                                        size: 25,
+                                        color: Colors.white,
+                                      ),
+                                      onPressed: _proximoPersonagem,
+                                    ),
+                                  ],
+                                ),
+                              if (!_carregandoElenco && _erroElenco == null)
+                                Center(
+                                  child: Text(
+                                    '${_indicePersonagemAtual + 1} de ${_elencoDados.length}',
+                                    style: const TextStyle(
+                                      fontSize: 12,
+                                      color: Colors.white60,
+                                    ),
+                                  ),
+                                ),
+                            ],
+                          ),
+                          const SizedBox(height: 30),
+
+                          // Seção Curiosidades
+                          Column(
+                            key: _secaoCuriosidadesKey,
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              const Text(
+                                'Curiosidades',
+                                style: TextStyle(
+                                  fontSize: 24,
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.white,
+                                ),
+                              ),
+                              const SizedBox(height: 12),
+
+                              // --- SUBSTITUÍDO O CONTEÚDO PELA IMAGEM EXATA ---
+                              ClipRRect(
+                                borderRadius: BorderRadius.circular(12),
+                                child: Image.asset(
+                                  'img/chalapiquiso.png',
+                                  height: 200,
+                                  width: double.infinity,
+                                  fit: BoxFit.cover,
+                                ),
+                              ),
+                              const SizedBox(height: 16),
+                              SizedBox(
+                                width: double.infinity,
+                                child: ElevatedButton(
+                                  style: ElevatedButton.styleFrom(
+                                    backgroundColor: const Color.fromARGB(
+                                      255,
+                                      204,
+                                      24,
+                                      11,
+                                    ),
+                                    foregroundColor: Colors.white,
+                                    padding: const EdgeInsets.symmetric(
+                                      vertical: 14,
+                                    ),
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(8),
+                                    ),
+                                  ),
+                                  onPressed: () => _navegarParaPagina(
+                                    const CuriosidadesPage(),
+                                  ),
+                                  child: const Text(
+                                    'Ver Mais Curiosidades',
+                                    style: TextStyle(
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                          const SizedBox(height: 30),
+
+                          // Seção Rapazes
+                          Column(
+                            key: _secaoRapazesKey,
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              const Text(
+                                'Rapazes',
+                                style: TextStyle(
+                                  fontSize: 24,
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.white,
+                                ),
+                              ),
+                              const SizedBox(height: 12),
+
+                              // --- SUBSTITUÍDO O CONTEÚDO PELA IMAGEM EXATA ---
+                              ClipRRect(
+                                borderRadius: BorderRadius.circular(12),
+                                child: Image.asset(
+                                  'img/logo.png',
+                                  height: 200,
+                                  width: double.infinity,
+                                  fit: BoxFit.cover,
+                                ),
+                              ),
+                              const SizedBox(height: 16),
+                              SizedBox(
+                                width: double.infinity,
+                                child: ElevatedButton(
+                                  style: ElevatedButton.styleFrom(
+                                    backgroundColor: const Color.fromARGB(
+                                      255,
+                                      255,
+                                      36,
+                                      36,
+                                    ),
+                                    foregroundColor: Colors.white,
+                                    padding: const EdgeInsets.symmetric(
+                                      vertical: 14,
+                                    ),
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(8),
+                                    ),
+                                  ),
+                                  onPressed: () =>
+                                      _navegarParaPagina(const RapazesPage()),
+                                  child: const Text(
+                                    'Ver Mais ',
+                                    style: TextStyle(
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                          const SizedBox(height: 20),
+                        ],
+                      ),
+                    ),
+                    const SizedBox(height: 20),
+                  ],
+                ),
+              ),
             ),
           ),
         ),
+      ),
+    );
+  }
 
-        // =========================
-        // CORPO DO APP
-        // =========================
-        body: Center(
-          child: ConstrainedBox(
-            constraints: const BoxConstraints(maxWidth: 450),
-            child: SingleChildScrollView(
-              controller: _scrollController,
+  Widget _construirCardImagem(String? path) {
+    final imagemValida = path != null &&
+        path.trim().isNotEmpty &&
+        (path.startsWith('http://') || path.startsWith('https://'));
+
+    return Container(
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(20.0),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.white.withOpacity(0.15),
+            spreadRadius: 1,
+            blurRadius: 8,
+            offset: const Offset(0, 4),
+          ),
+        ],
+      ),
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(20.0),
+        child: imagemValida
+            ? Image.network(
+                path,
+                width: double.infinity,
+                height: 170,
+                fit: BoxFit.cover,
+                loadingBuilder: (context, child, loadingProgress) {
+                  if (loadingProgress == null) return child;
+                  return Image.asset(
+                    'img/logo.png',
+                    width: double.infinity,
+                    height: 170,
+                    fit: BoxFit.contain,
+                  );
+                },
+                errorBuilder: (context, error, stackTrace) => Image.asset(
+                  'img/logo.png',
+                  width: double.infinity,
+                  height: 170,
+                  fit: BoxFit.contain,
+                ),
+              )
+            : Image.asset(
+                'img/logo.png',
+                width: double.infinity,
+                height: 170,
+                fit: BoxFit.contain,
+              ),
+      ),
+    );
+  }
+}
+
+class HistoriaPage extends StatelessWidget {
+  const HistoriaPage({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return const PaginaDetalhes(
+      titulo: 'História',
+      imagem: 'img/history.png',
+      texto:
+          'Wayne Szalinski é um inventor brilhante, mas suas experiências nem sempre saem como planejado. Depois de ativar acidentalmente uma máquina de encolher, ele reduz seus filhos e os vizinhos a poucos centímetros de altura. Perdidos no próprio quintal, os quatro precisam trabalhar juntos para voltar para casa.',
+      itens: [
+        'A aventura mistura comédia, ficção científica e a imaginação de uma criança.',
+        'O quintal se transforma em um mundo enorme, cheio de obstáculos inesperados.',
+        'A família aprende que cooperação e coragem são maiores do que qualquer invenção.',
+      ],
+    );
+  }
+}
+
+class CuriosidadesPage extends StatelessWidget {
+  const CuriosidadesPage({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return const PaginaDetalhes(
+      titulo: 'Curiosidades',
+      imagem: 'img/chalapiquiso.png',
+      texto:
+          'O filme transformou objetos comuns em cenários gigantescos. Uma folha de grama vira uma floresta, uma formiga parece um animal enorme e uma gota de água ganha proporções impressionantes.',
+      itens: [
+        'A produção foi uma das primeiras comédias a usar efeitos visuais para criar personagens minúsculos.',
+        'Os sons do quintal foram reforçados para deixar cada passo e movimento mais divertido.',
+        'O sucesso do filme levou a continuações e a uma série de televisão.',
+      ],
+    );
+  }
+}
+
+class RapazesPage extends StatelessWidget {
+  const RapazesPage({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return const PaginaDetalhes(
+      titulo: 'Rapazes',
+      imagem: 'img/logo.png',
+      texto:
+          'Os rapazes são o coração da aventura. Mesmo assustados com o tamanho do novo mundo, eles encontram soluções criativas para atravessar o jardim e avisar os adultos sobre o que aconteceu.',
+      itens: [
+        'Cada garoto contribui com uma habilidade diferente para o grupo.',
+        'A amizade fica mais forte quando eles precisam enfrentar desafios juntos.',
+        'A jornada mostra que crescer também significa assumir responsabilidades.',
+      ],
+    );
+  }
+}
+
+class PaginaDetalhes extends StatelessWidget {
+  final String titulo;
+  final String imagem;
+  final String texto;
+  final List<String> itens;
+
+  const PaginaDetalhes({
+    super.key,
+    required this.titulo,
+    required this.imagem,
+    required this.texto,
+    required this.itens,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      color: Colors.grey,
+      child: Center(
+        child: SizedBox(
+          width: 450,
+          child: Scaffold(
+            appBar: AppBar(
+              backgroundColor: const Color.fromARGB(255, 112, 32, 32),
+              centerTitle: true,
+              title: Text(
+                titulo,
+                style: const TextStyle(
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
+                  color: Color.fromARGB(255, 168, 98, 98),
+                ),
+              ),
+              foregroundColor: Colors.white,
+            ),
+            body: SingleChildScrollView(
               child: Column(
                 children: [
                   const SizedBox(height: 20),
@@ -168,439 +698,95 @@ class _MainAppState extends State<MainApp> {
                       borderRadius: BorderRadius.circular(20),
                       boxShadow: [
                         BoxShadow(
-                          color: Colors.black.withValues(alpha: 0.25),
+                          color: const Color.fromARGB(
+                            255,
+                            4,
+                            25,
+                            71,
+                          ).withOpacity(0.5),
                           spreadRadius: 2,
-                          blurRadius: 8,
-                          offset: const Offset(0, 4),
+                          blurRadius: 5,
                         ),
                       ],
                     ),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        
-                        // =========================
-                        // CAPA
-                        // =========================
-                        Stack(
-                          alignment: Alignment.center,
-                          children: [
-                            ClipRRect(
-                              borderRadius: BorderRadius.circular(16),
-                              child: Image.asset(
-                                'img/queridacapa.png',
-                                width: double.infinity,
-                                height: 200,
-                                fit: BoxFit.cover,
-                              ),
-                            ),
-                            Container(
-                              width: double.infinity,
-                              height: 200,
-                              decoration: BoxDecoration(
-                                color: Colors.black.withValues(alpha: 0.3),
-                                borderRadius: BorderRadius.circular(16),
-                              ),
-                            ),
-                            Image.asset(
-                              'img/logo.png',
-                              height: 90,
-                              fit: BoxFit.contain,
-                            ),
-                          ],
+                        ClipRRect(
+                          borderRadius: BorderRadius.circular(16),
+                          child: Image.asset(
+                            imagem,
+                            width: double.infinity,
+                            height: 200,
+                            fit: BoxFit.cover,
+                          ),
                         ),
-                        const SizedBox(height: 30),
-
-                        // =========================
-                        // SEÇÃO HISTÓRIA
-                        // =========================
-                        Column(
-                          key: _secaoHistoriaKey,
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            _tituloSecao('História'),
-                            const SizedBox(height: 12),
-                            Container(
-                              width: double.infinity,
-                              padding: const EdgeInsets.all(15),
-                              decoration: BoxDecoration(
-                                color: Colors.red,
-                                borderRadius: BorderRadius.circular(15),
-                              ),
-                              child: Column(
-                                children: [
-                                  ClipRRect(
-                                    borderRadius: BorderRadius.circular(12),
-                                    child: Image.asset(
-                                      'img/logo.png',
-                                      width: double.infinity,
-                                      height: 150,
-                                      fit: BoxFit.cover,
-                                    ),
-                                  ),
-                                  const SizedBox(height: 12),
-                                  const Text(
-                                    'Conheça a história de Querida, Encolhi as Crianças.',
-                                    style: TextStyle(color: Colors.white, fontSize: 15),
-                                    textAlign: TextAlign.center,
-                                  ),
-                                  const SizedBox(height: 12),
-                                  ElevatedButton(
-                                    onPressed: () {
-                                      Navigator.push(
-                                        context,
-                                        MaterialPageRoute(builder: (context) => const PaginaHistoria()),
-                                      );
-                                    },
-                                    child: const Text('Saiba mais'),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ],
+                        const SizedBox(height: 25),
+                        Text(
+                          titulo,
+                          style: const TextStyle(
+                            fontSize: 24,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.white,
+                          ),
                         ),
-                        const SizedBox(height: 30),
-
-                        // =========================
-                        // SEÇÃO ELENCO
-                        // =========================
-                        Column(
-                          key: _secaoElencoKey,
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            _tituloSecao('Elenco'),
-                            const SizedBox(height: 12),
-                            Row(
+                        const SizedBox(height: 14),
+                        Text(
+                          texto,
+                          style: const TextStyle(
+                            fontSize: 16,
+                            height: 1.5,
+                            color: Colors.white,
+                          ),
+                        ),
+                        const SizedBox(height: 22),
+                        ...itens.map(
+                          (item) => Padding(
+                            padding: const EdgeInsets.only(bottom: 14),
+                            child: Row(
+                              crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                IconButton(
-                                  onPressed: _personagemAnterior,
-                                  icon: const Icon(Icons.arrow_back_ios, size: 25, color: Colors.white),
-                                ),
+                                const Icon(Icons.star, color: Colors.amber),
+                                const SizedBox(width: 10),
                                 Expanded(
-                                  child: SizedBox(
-                                    height: 280,
-                                    child: PageView.builder(
-                                      controller: _pageController,
-                                      itemCount: _elencoDados.length,
-                                      onPageChanged: (index) {
-                                        setState(() {
-                                          _indicePersonagemAtual = index;
-                                        });
-                                      },
-                                      itemBuilder: (context, index) {
-                                        final personagem = _elencoDados[index];
-                                        return Column(
-                                          mainAxisAlignment: MainAxisAlignment.center,
-                                          children: [
-                                            _construirCardImagem(personagem['imagem']!),
-                                            const SizedBox(height: 12),
-                                            Text(
-                                              personagem['nome']!,
-                                              style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.white),
-                                              textAlign: TextAlign.center,
-                                            ),
-                                            const SizedBox(height: 4),
-                                            Text(
-                                              'Ator: ${personagem['ator']!}',
-                                              style: const TextStyle(fontSize: 14, color: Colors.white70),
-                                              textAlign: TextAlign.center,
-                                            ),
-                                          ],
-                                        );
-                                      },
+                                  child: Text(
+                                    item,
+                                    style: const TextStyle(
+                                      fontSize: 16,
+                                      height: 1.4,
+                                      color: Colors.white,
                                     ),
                                   ),
-                                ),
-                                IconButton(
-                                  onPressed: _proximoPersonagem,
-                                  icon: const Icon(Icons.arrow_forward_ios, size: 25, color: Colors.white),
                                 ),
                               ],
                             ),
-                            const SizedBox(height: 5),
-                            Center(
-                              child: Text(
-                                '${_indicePersonagemAtual + 1} de ${_elencoDados.length}',
-                                style: const TextStyle(fontSize: 12, color: Colors.white60),
-                              ),
-                            ),
-                          ],
+                          ),
                         ),
-                        const SizedBox(height: 30),
-
-                        // =========================
-                        // SEÇÃO CURIOSIDADES
-                        // =========================
-                        Column(
-                          key: _secaoCuriosidadesKey,
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            _tituloSecao('Curiosidades'),
-                            const SizedBox(height: 12),
-                            Container(
-                              width: double.infinity,
-                              padding: const EdgeInsets.all(15),
-                              decoration: BoxDecoration(
-                                color: Colors.orange,
-                                borderRadius: BorderRadius.circular(15),
+                        const SizedBox(height: 12),
+                        SizedBox(
+                          width: double.infinity,
+                          child: ElevatedButton.icon(
+                            onPressed: () => Navigator.pop(context),
+                            icon: const Icon(Icons.arrow_back),
+                            label: const Text('Voltar para a página inicial'),
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: const Color.fromARGB(
+                                255,
+                                236,
+                                17,
+                                17,
                               ),
-                              child: Column(
-                                children: [
-                                  ClipRRect(
-                                    borderRadius: BorderRadius.circular(12),
-                                    child: Image.asset(
-                                      'img/logo.png',
-                                      width: double.infinity,
-                                      height: 150,
-                                      fit: BoxFit.cover,
-                                    ),
-                                  ),
-                                  const SizedBox(height: 12),
-                                  const Text(
-                                    'Descubra fatos interessantes sobre o filme.',
-                                    style: TextStyle(color: Colors.white, fontSize: 15),
-                                    textAlign: TextAlign.center,
-                                  ),
-                                  const SizedBox(height: 12),
-                                  ElevatedButton(
-                                    onPressed: () {
-                                      Navigator.push(
-                                        context,
-                                        MaterialPageRoute(builder: (context) => const PaginaCuriosidades()),
-                                      );
-                                    },
-                                    child: const Text('Saiba mais'),
-                                  ),
-                                ],
-                              ),
+                              foregroundColor: Colors.white,
+                              padding: const EdgeInsets.symmetric(vertical: 14),
                             ),
-                          ],
+                          ),
                         ),
-                        const SizedBox(height: 30),
-
-                        // =========================
-                        // SEÇÃO RAPAZES
-                        // =========================
-                        Column(
-                          key: _secaoRapazesKey,
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            _tituloSecao('Rapazes'),
-                            const SizedBox(height: 12),
-                            Container(
-                              width: double.infinity,
-                              padding: const EdgeInsets.all(15),
-                              decoration: BoxDecoration(
-                                color: Colors.purple,
-                                borderRadius: BorderRadius.circular(15),
-                              ),
-                              child: Column(
-                                children: [
-                                  ClipRRect(
-                                    borderRadius: BorderRadius.circular(12),
-                                    child: Image.asset(
-                                      'img/logo.png',
-                                      width: double.infinity,
-                                      height: 150,
-                                      fit: BoxFit.cover,
-                                    ),
-                                  ),
-                                  const SizedBox(height: 12),
-                                  const Text(
-                                    'Conheça os personagens e os rapazes do filme.',
-                                    style: TextStyle(color: Colors.white, fontSize: 15),
-                                    textAlign: TextAlign.center,
-                                  ),
-                                  const SizedBox(height: 12),
-                                  ElevatedButton(
-                                    onPressed: () {
-                                      Navigator.push(
-                                        context,
-                                        MaterialPageRoute(builder: (context) => const PaginaRapazes()),
-                                      );
-                                    },
-                                    child: const Text('Saiba mais'),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ],
-                        ),
-                        const SizedBox(height: 20),
                       ],
                     ),
                   ),
                   const SizedBox(height: 20),
                 ],
               ),
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-
-  // =========================
-  // WIDGETS AUXILIARES
-  // =========================
-  Widget _botaoMenu(String texto, VoidCallback onPressed) {
-    return TextButton(
-      onPressed: onPressed,
-      child: Text(
-        texto,
-        style: const TextStyle(color: Colors.white, fontSize: 14, fontWeight: FontWeight.bold),
-      ),
-    );
-  }
-
-  Widget _tituloSecao(String texto) {
-    return Text(
-      texto,
-      style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: Colors.white),
-    );
-  }
-
-  Widget _construirCardImagem(String path) {
-    return Container(
-      width: 170,
-      height: 170,
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(20),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.white.withValues(alpha: 0.15),
-            spreadRadius: 1,
-            blurRadius: 8,
-            offset: const Offset(0, 4),
-          ),
-        ],
-      ),
-      child: ClipRRect(
-        borderRadius: BorderRadius.circular(20),
-        child: Image.asset(
-          path,
-          width: 170,
-          height: 170,
-          fit: BoxFit.cover,
-        ),
-      ),
-    );
-  }
-}
-
-// ============================================================
-// PÁGINAS SECUNDÁRIAS
-// ============================================================
-
-class PaginaHistoria extends StatelessWidget {
-  const PaginaHistoria({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.grey,
-      appBar: AppBar(
-        title: const Text('História', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
-        backgroundColor: const Color.fromARGB(255, 112, 32, 32),
-      ),
-      body: Center(
-        child: ConstrainedBox(
-          constraints: const BoxConstraints(maxWidth: 450),
-          child: SingleChildScrollView(
-            padding: const EdgeInsets.all(20),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                ClipRRect(
-                  borderRadius: BorderRadius.circular(20),
-                  child: Image.asset('img/logo.png', width: double.infinity, height: 220, fit: BoxFit.cover),
-                ),
-                const SizedBox(height: 20),
-                const Text('História', style: TextStyle(fontSize: 28, fontWeight: FontWeight.bold)),
-                const SizedBox(height: 12),
-                const Text(
-                  'Aqui você pode colocar a história completa de Querida, Encolhi as Crianças, contando todos os detalhes da aventura da família Szalinski.',
-                  style: TextStyle(fontSize: 17, height: 1.5),
-                ),
-              ],
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-class PaginaCuriosidades extends StatelessWidget {
-  const PaginaCuriosidades({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.grey,
-      appBar: AppBar(
-        title: const Text('Curiosidades', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
-        backgroundColor: const Color.fromARGB(255, 112, 32, 32),
-      ),
-      body: Center(
-        child: ConstrainedBox(
-          constraints: const BoxConstraints(maxWidth: 450),
-          child: SingleChildScrollView(
-            padding: const EdgeInsets.all(20),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                ClipRRect(
-                  borderRadius: BorderRadius.circular(20),
-                  child: Image.asset('img/logo.png', width: double.infinity, height: 220, fit: BoxFit.cover),
-                ),
-                const SizedBox(height: 20),
-                const Text('Curiosidades', style: TextStyle(fontSize: 28, fontWeight: FontWeight.bold)),
-                const SizedBox(height: 12),
-                const Text(
-                  'Aqui você pode colocar várias curiosidades sobre o filme, os atores, a produção, os efeitos especiais e as cenas mais marcantes.',
-                  style: TextStyle(fontSize: 17, height: 1.5),
-                ),
-              ],
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-class PaginaRapazes extends StatelessWidget {
-  const PaginaRapazes({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.grey,
-      appBar: AppBar(
-        title: const Text('Rapazes', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
-        backgroundColor: const Color.fromARGB(255, 112, 32, 32),
-      ),
-      body: Center(
-        child: ConstrainedBox(
-          constraints: const BoxConstraints(maxWidth: 450),
-          child: SingleChildScrollView(
-            padding: const EdgeInsets.all(20),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                ClipRRect(
-                  borderRadius: BorderRadius.circular(20),
-                  child: Image.asset('img/logo.png', width: double.infinity, height: 220, fit: BoxFit.cover),
-                ),
-                const SizedBox(height: 20),
-                const Text('Rapazes', style: TextStyle(fontSize: 28, fontWeight: FontWeight.bold)),
-                const SizedBox(height: 12),
-                const Text(
-                  'Aqui você pode apresentar os personagens masculinos do filme, suas características, personalidades e informações sobre cada um deles.',
-                  style: TextStyle(fontSize: 17, height: 1.5),
-                ),
-              ],
             ),
           ),
         ),
