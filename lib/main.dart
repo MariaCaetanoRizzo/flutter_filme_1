@@ -122,6 +122,7 @@ class _MainAppState extends State<MainApp> {
           child: SizedBox(
             width: 450,
             child: Scaffold(
+              backgroundColor: const Color.fromARGB(255, 224, 107, 107),
               appBar: AppBar(
                 backgroundColor: const Color.fromARGB(255, 112, 32, 32),
                 centerTitle: true,
@@ -130,7 +131,7 @@ class _MainAppState extends State<MainApp> {
                   style: TextStyle(
                     fontSize: 20,
                     fontWeight: FontWeight.bold,
-                    color: Color.fromARGB(255, 168, 98, 98),
+                    color: Color.fromRGBO(228, 222, 222, 1),
                   ),
                 ),
                 bottom: PreferredSize(
@@ -267,7 +268,7 @@ class _MainAppState extends State<MainApp> {
                                       17,
                                       17,
                                     ),
-                                    foregroundColor: Colors.white,
+                                    foregroundColor: const Color.fromARGB(255, 250, 246, 246),
                                     padding: const EdgeInsets.symmetric(
                                       vertical: 14,
                                     ),
@@ -309,7 +310,7 @@ class _MainAppState extends State<MainApp> {
                                   height: 280,
                                   child: Center(
                                     child: CircularProgressIndicator(
-                                      color: Colors.white,
+                                      color: Color.fromARGB(255, 241, 237, 237),
                                     ),
                                   ),
                                 )
@@ -614,9 +615,12 @@ class HistoriaPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const PaginaJson(
-      nome: 'História',
+    return const PaginaDetalhes(
+      titulo: 'História',
       imagem: 'img/history.png',
+      texto:
+          'Wayne Szalinski é um inventor que trabalha em uma máquina capaz de encolher objetos. Durante uma experiência no sótão, uma bola de beisebol atravessa a janela e aciona acidentalmente o equipamento. O raio atinge Amy e Nick Szalinski e os vizinhos Russ Jr. e Ron Thompson, reduzindo as quatro crianças a poucos centímetros de altura. Como Wayne e Diane não percebem o acidente, as crianças acabam no lixo e são levadas para o quintal, que passa a parecer uma enorme selva. Perdidos entre folhas de grama, gotas de água e objetos gigantes, eles precisam encontrar o caminho de volta para casa. No percurso, enfrentam os aspersores, uma abelha e outros perigos, além de fazer amizade com uma formiga que chamam de Antie. Quando um escorpião ameaça o grupo, Antie tenta protegê-los e acaba morrendo. Enquanto isso, Wayne e Diane procuram pelos filhos e descobrem que a máquina foi ativada pela bola de beisebol. Com a ajuda do cachorro Quark, as crianças conseguem chamar a atenção dos pais. Wayne reconstrói o funcionamento da máquina e devolve todos ao tamanho normal.',
+      itens: [],
     );
   }
 }
@@ -626,58 +630,16 @@ class CuriosidadesPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const PaginaJson(
-      nome: 'Curiosidades',
+    return const PaginaDetalhes(
+      titulo: 'Curiosidades',
       imagem: 'img/chalapiquiso.png',
-    );
-  }
-}
-
-class PaginaJson extends StatelessWidget {
-  final String nome;
-  final String imagem;
-
-  const PaginaJson({super.key, required this.nome, required this.imagem});
-
-  Future<Map<String, dynamic>> _carregarConteudo() async {
-    final arquivo = await rootBundle.loadString('json/historia.json');
-    final dados = jsonDecode(arquivo) as List<dynamic>;
-    final pagina = dados
-        .map((item) => Map<String, dynamic>.from(item as Map))
-        .firstWhere((item) => item['nome'] == nome);
-    return pagina;
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return FutureBuilder<Map<String, dynamic>>(
-      future: _carregarConteudo(),
-      builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return const Scaffold(
-            body: Center(child: CircularProgressIndicator()),
-          );
-        }
-        if (snapshot.hasError || !snapshot.hasData) {
-          return PaginaDetalhes(
-            titulo: nome,
-            imagem: imagem,
-            texto: 'Não foi possível carregar o conteúdo desta página.',
-            itens: const [],
-          );
-        }
-
-        final dados = snapshot.data!;
-        final itens = (dados['itens'] as List<dynamic>? ?? [])
-            .map((item) => item.toString())
-            .toList();
-        return PaginaDetalhes(
-          titulo: nome,
-          imagem: imagem,
-          texto: dados['texto'] as String? ?? '',
-          itens: itens,
-        );
-      },
+      texto:
+          'O filme transformou objetos comuns em cenários gigantescos. Uma folha de grama vira uma floresta, uma formiga parece um animal enorme e uma gota de água ganha proporções impressionantes.',
+      itens: [
+        'A produção foi uma das primeiras comédias a usar efeitos visuais para criar personagens minúsculos.',
+        'Os sons do quintal foram reforçados para deixar cada passo e movimento mais divertido.',
+        'O sucesso do filme levou a continuações e a uma série de televisão.',
+      ],
     );
   }
 }
@@ -723,6 +685,7 @@ class PaginaDetalhes extends StatelessWidget {
         child: SizedBox(
           width: 450,
           child: Scaffold(
+            backgroundColor: const Color.fromARGB(255, 255, 220, 220),
             appBar: AppBar(
               backgroundColor: const Color.fromARGB(255, 112, 32, 32),
               centerTitle: true,
