@@ -1,11 +1,11 @@
-[
-  {
+
+  [{
     "id": 1,
     "nome": "Wayne Szalinski",
     "ator": "Rick Moranis",
     "descricao": "Um inventor e cientista que cria a máquina de encolhimento. Depois do acidente, ele tenta descobrir o que aconteceu com seus filhos.",
     "principal": true,
-    "imagem": "https://static-wikia-nocookie-net.translate.goog/disney/images/2/24/Wayne_Szalinski_HWSO.png/revision/latest?cb=20150503065207&_x_tr_sl=en&_x_tr_tl=pt&_x_tr_hl=pt&_x_tr_pto=tc"
+    "imagem": "https://static.wikia.nocookie.net/p__/images/d/d3/Wayne_Szalinski.jpg/revision/latest?cb=20121207222654&path-prefix=protagonist"
   },
   {
     "id": 2,
@@ -29,7 +29,7 @@
     "ator": "Amy O'Neill",
     "descricao": "Filha de Wayne que acaba sendo encolhida junto com as outras crianças.",
     "principal": true,
-    "imagem": "https://static-wikia-nocookie-net.translate.goog/disney/images/e/e0/Amy_Szalinski.png/revision/latest?cb=20150504043601&_x_tr_sl=en&_x_tr_tl=pt&_x_tr_hl=pt&_x_tr_pto=tc"
+    "imagem": "https://static.wikia.nocookie.net/p__/images/e/e0/Amy_Szalinski.png/revision/latest?cb=20220621115153&path-prefix=protagonist"
   },
   {
     "id": 5,
@@ -37,7 +37,7 @@
     "ator": "Thomas Wilson Brown",
     "descricao": "Filho mais velho da família Thompson e uma das crianças afetadas pelo acidente.",
     "principal": true,
-    "imagem": "https://static-wikia-nocookie-net.translate.goog/disney/images/d/d2/Katrina-stagg-moviepilot.jpg/revision/latest?cb=20161215025940&_x_tr_sl=en&_x_tr_tl=pt&_x_tr_hl=pt&_x_tr_pto=tc"
+    "imagem": "https://i2-prod.mirror.co.uk/article10603636.ece/ALTERNATES/s1200e/JS122427106.jpg"
   },
   {
     "id": 6,
@@ -61,6 +61,6 @@
     "ator": "Kristine Sutherland",
     "descricao": "Mãe de Russ e Ron Thompson e esposa de Russ Thompson.",
     "principal": false,
-    "imagem": ""
+    "imagem": "https://static.wikia.nocookie.net/disney/images/6/6a/Mae_Thompson.png/revision/latest?cb=20150504053036"
   }
 ]

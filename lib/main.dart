@@ -51,7 +51,7 @@ class _MainAppState extends State<MainApp> {
     } catch (erro) {
       if (!mounted) return;
       setState(() {
-        _erroElenco = 'Não foi possível carregar o elenco.';
+        _erroElenco = 'Não foi possível carregar o elenco: ${erro.toString()}';
         _carregandoElenco = false;
       });
     }
@@ -489,7 +489,7 @@ class _MainAppState extends State<MainApp> {
                               ClipRRect(
                                 borderRadius: BorderRadius.circular(12),
                                 child: Image.asset(
-                                  'img/logo.png',
+                                  'img/rapazes.jpeg',
                                   height: 200,
                                   width: double.infinity,
                                   fit: BoxFit.cover,
@@ -543,12 +543,18 @@ class _MainAppState extends State<MainApp> {
   }
 
   Widget _construirCardImagem(String? path) {
+    final imagemValida =
+        path != null &&
+        path.trim().isNotEmpty &&
+        (path.startsWith('http://') || path.startsWith('https://'));
+    final assetValido = path != null && path.trim().isNotEmpty;
+
     return Container(
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(20.0),
         boxShadow: [
           BoxShadow(
-            color: Colors.white.withOpacity(0.15),
+            color: const Color.fromARGB(255, 131, 70, 70).withOpacity(0.15),
             spreadRadius: 1,
             blurRadius: 8,
             offset: const Offset(0, 4),
@@ -557,24 +563,46 @@ class _MainAppState extends State<MainApp> {
       ),
       child: ClipRRect(
         borderRadius: BorderRadius.circular(20.0),
-        child: path == null || path.isEmpty
-            ? Image.asset(
-                'img/logo.png',
-                width: double.infinity,
-                height: 170,
-                fit: BoxFit.contain,
-              )
-            : Image.network(
+        child: imagemValida
+            ? Image.network(
                 path,
                 width: double.infinity,
-                height: 170,
+                height: 200,
                 fit: BoxFit.cover,
+                loadingBuilder: (context, child, loadingProgress) {
+                  if (loadingProgress == null) return child;
+                  return Image.asset(
+                    'img/logo.png',
+                    width: double.infinity,
+                    height: 200,
+                    fit: BoxFit.contain,
+                  );
+                },
                 errorBuilder: (context, error, stackTrace) => Image.asset(
                   'img/logo.png',
                   width: double.infinity,
-                  height: 170,
+                  height: 200,
                   fit: BoxFit.contain,
                 ),
+              )
+            : assetValido
+            ? Image.asset(
+                path,
+                width: double.infinity,
+                height: 200,
+                fit: BoxFit.contain,
+                errorBuilder: (context, error, stackTrace) => Image.asset(
+                  'img/logo.png',
+                  width: double.infinity,
+                  height: 200,
+                  fit: BoxFit.contain,
+                ),
+              )
+            : Image.asset(
+                'img/logo.png',
+                width: double.infinity,
+                height: 200,
+                fit: BoxFit.contain,
               ),
       ),
     );
@@ -586,16 +614,9 @@ class HistoriaPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const PaginaDetalhes(
-      titulo: 'História',
+    return const PaginaJson(
+      nome: 'História',
       imagem: 'img/history.png',
-      texto:
-          'Wayne Szalinski é um inventor brilhante, mas suas experiências nem sempre saem como planejado. Depois de ativar acidentalmente uma máquina de encolher, ele reduz seus filhos e os vizinhos a poucos centímetros de altura. Perdidos no próprio quintal, os quatro precisam trabalhar juntos para voltar para casa.',
-      itens: [
-        'A aventura mistura comédia, ficção científica e a imaginação de uma criança.',
-        'O quintal se transforma em um mundo enorme, cheio de obstáculos inesperados.',
-        'A família aprende que cooperação e coragem são maiores do que qualquer invenção.',
-      ],
     );
   }
 }
@@ -605,16 +626,58 @@ class CuriosidadesPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const PaginaDetalhes(
-      titulo: 'Curiosidades',
+    return const PaginaJson(
+      nome: 'Curiosidades',
       imagem: 'img/chalapiquiso.png',
-      texto:
-          'O filme transformou objetos comuns em cenários gigantescos. Uma folha de grama vira uma floresta, uma formiga parece um animal enorme e uma gota de água ganha proporções impressionantes.',
-      itens: [
-        'A produção foi uma das primeiras comédias a usar efeitos visuais para criar personagens minúsculos.',
-        'Os sons do quintal foram reforçados para deixar cada passo e movimento mais divertido.',
-        'O sucesso do filme levou a continuações e a uma série de televisão.',
-      ],
+    );
+  }
+}
+
+class PaginaJson extends StatelessWidget {
+  final String nome;
+  final String imagem;
+
+  const PaginaJson({super.key, required this.nome, required this.imagem});
+
+  Future<Map<String, dynamic>> _carregarConteudo() async {
+    final arquivo = await rootBundle.loadString('json/historia.json');
+    final dados = jsonDecode(arquivo) as List<dynamic>;
+    final pagina = dados
+        .map((item) => Map<String, dynamic>.from(item as Map))
+        .firstWhere((item) => item['nome'] == nome);
+    return pagina;
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return FutureBuilder<Map<String, dynamic>>(
+      future: _carregarConteudo(),
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const Scaffold(
+            body: Center(child: CircularProgressIndicator()),
+          );
+        }
+        if (snapshot.hasError || !snapshot.hasData) {
+          return PaginaDetalhes(
+            titulo: nome,
+            imagem: imagem,
+            texto: 'Não foi possível carregar o conteúdo desta página.',
+            itens: const [],
+          );
+        }
+
+        final dados = snapshot.data!;
+        final itens = (dados['itens'] as List<dynamic>? ?? [])
+            .map((item) => item.toString())
+            .toList();
+        return PaginaDetalhes(
+          titulo: nome,
+          imagem: imagem,
+          texto: dados['texto'] as String? ?? '',
+          itens: itens,
+        );
+      },
     );
   }
 }
@@ -626,13 +689,13 @@ class RapazesPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return const PaginaDetalhes(
       titulo: 'Rapazes',
-      imagem: 'img/logo.png',
+      imagem: 'img/rapazes.jpeg',
       texto:
-          'Os rapazes são o coração da aventura. Mesmo assustados com o tamanho do novo mundo, eles encontram soluções criativas para atravessar o jardim e avisar os adultos sobre o que aconteceu.',
+          'Conheça os desenvolvedores responsáveis pela documentação, pela aplicação mobile e pelo jogo inspirado no filme.',
       itens: [
-        'Cada garoto contribui com uma habilidade diferente para o grupo.',
-        'A amizade fica mais forte quando eles precisam enfrentar desafios juntos.',
-        'A jornada mostra que crescer também significa assumir responsabilidades.',
+        'Arthur Paixão: desenvolvedor da documentação, da configuração do GitHub e do front-end do jogo que será criado com base no filme.',
+        'Maria Caetano Rizzo: responsável pelo back-end e pelo front-end completo da aplicação mobile.',
+        'Rihan de Jesus: responsável pelo front-end e pelo back-end do desenvolvimento do jogo criado.',
       ],
     );
   }
