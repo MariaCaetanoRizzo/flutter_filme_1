@@ -1,3 +1,37 @@
-# flutter_filme_1
+# Mobile do Filme "Querida, encolhi as crianças"
+- Repositório para mandar e criar os projetos da amostra
+- Alunos produtores do projeto: Arthur Paixão Serafim, Maria Caetano Rizzo, Rihan de Jesus
+- Nosso projeto foca em mostrar o enredo, elenco, dados técnicos e curiosidades do filme, afim de informar os usuários.
 
-A new Flutter project.
+## Sumário
+- [Descrição do desenvolvimento do aplicativo](https://github.com/MariaCaetanoRizzo/flutter_filme_1/wiki/Descri%C3%A7%C3%A3o-do-desenvolvimento#descri%C3%A7%C3%A3o-do-desenvolvimento-do-aplicativo)
+- [Lista de Widgets utilizados](https://github.com/MariaCaetanoRizzo/flutter_filme_1/wiki/Descri%C3%A7%C3%A3o-do-desenvolvimento#lista-de-widgets-utilizados)
+  - [MaterialApp](https://github.com/MariaCaetanoRizzo/flutter_filme_1/wiki/Descri%C3%A7%C3%A3o-do-desenvolvimento#materialapp)
+  - [Container](https://github.com/MariaCaetanoRizzo/flutter_filme_1/wiki/Descri%C3%A7%C3%A3o-do-desenvolvimento#container)
+  - [Center](https://github.com/MariaCaetanoRizzo/flutter_filme_1/wiki/Descri%C3%A7%C3%A3o-do-desenvolvimento#center)
+  - [SizedBox](https://github.com/MariaCaetanoRizzo/flutter_filme_1/wiki/Descri%C3%A7%C3%A3o-do-desenvolvimento#sizedbox)
+  - [Scaffold](https://github.com/MariaCaetanoRizzo/flutter_filme_1/wiki/Descri%C3%A7%C3%A3o-do-desenvolvimento#scaffold)
+  - [PreferredSize](https://github.com/MariaCaetanoRizzo/flutter_filme_1/wiki/Descri%C3%A7%C3%A3o-do-desenvolvimento#preferredsize)
+  - [SingleChildScrollView](https://github.com/MariaCaetanoRizzo/flutter_filme_1/wiki/Descri%C3%A7%C3%A3o-do-desenvolvimento#singlechildscrollview)
+  - [Row](https://github.com/MariaCaetanoRizzo/flutter_filme_1/wiki/Descri%C3%A7%C3%A3o-do-desenvolvimento#row)
+  - [TextButton](https://github.com/MariaCaetanoRizzo/flutter_filme_1/wiki/Descri%C3%A7%C3%A3o-do-desenvolvimento#textbutton)
+  - [Stack](https://github.com/MariaCaetanoRizzo/flutter_filme_1/wiki/Descri%C3%A7%C3%A3o-do-desenvolvimento#stack)
+  - [ClipRRect](https://github.com/MariaCaetanoRizzo/flutter_filme_1/wiki/Descri%C3%A7%C3%A3o-do-desenvolvimento#cliprrect)
+  - [Image.asset](https://github.com/MariaCaetanoRizzo/flutter_filme_1/wiki/Descri%C3%A7%C3%A3o-do-desenvolvimento#imageasset)
+  - [Text/TextStyle](https://github.com/MariaCaetanoRizzo/flutter_filme_1/wiki/Descri%C3%A7%C3%A3o-do-desenvolvimento#texttextstyle)
+  - [IconButton](https://github.com/MariaCaetanoRizzo/flutter_filme_1/wiki/Descri%C3%A7%C3%A3o-do-desenvolvimento#iconbutton)
+  - [Expanded](https://github.com/MariaCaetanoRizzo/flutter_filme_1/wiki/Descri%C3%A7%C3%A3o-do-desenvolvimento#expanded)
+  - [PageView.builder](https://github.com/MariaCaetanoRizzo/flutter_filme_1/wiki/Descri%C3%A7%C3%A3o-do-desenvolvimento#pageviewbuilder)
+  - [PageController](https://github.com/MariaCaetanoRizzo/flutter_filme_1/wiki/Descri%C3%A7%C3%A3o-do-desenvolvimento#pagecontroller)
+  - [Column](https://github.com/MariaCaetanoRizzo/flutter_filme_1/wiki/Descri%C3%A7%C3%A3o-do-desenvolvimento#column)
+  - [_construirCardImagem()](https://github.com/MariaCaetanoRizzo/flutter_filme_1/wiki/Descri%C3%A7%C3%A3o-do-desenvolvimento#_construircardimagem)
+  - [BoxDecoration](https://github.com/MariaCaetanoRizzo/flutter_filme_1/wiki/Descri%C3%A7%C3%A3o-do-desenvolvimento#boxdecoration)
+  - [BorderRadius.circular()](https://github.com/MariaCaetanoRizzo/flutter_filme_1/wiki/Descri%C3%A7%C3%A3o-do-desenvolvimento#borderradiuscircular)
+  - [BoxShadow](https://github.com/MariaCaetanoRizzo/flutter_filme_1/wiki/Descri%C3%A7%C3%A3o-do-desenvolvimento#boxshadow)
+  - [ScrollController](https://github.com/MariaCaetanoRizzo/flutter_filme_1/wiki/Descri%C3%A7%C3%A3o-do-desenvolvimento#scrollcontroller)
+- [Tela Inicial](https://github.com/MariaCaetanoRizzo/flutter_filme_1/wiki/Descri%C3%A7%C3%A3o-do-desenvolvimento#tela-inicial)
+- [História](https://github.com/MariaCaetanoRizzo/flutter_filme_1/wiki/Descri%C3%A7%C3%A3o-do-desenvolvimento#hist%C3%B3ria)
+- [Curiosidades](https://github.com/MariaCaetanoRizzo/flutter_filme_1/wiki/Descri%C3%A7%C3%A3o-do-desenvolvimento#curiosidades)
+- [Créditos](https://github.com/MariaCaetanoRizzo/flutter_filme_1/wiki/Descri%C3%A7%C3%A3o-do-desenvolvimento#cr%C3%A9ditos)
+- [Músicas Json](https://github.com/MariaCaetanoRizzo/flutter_filme_1/wiki/M%C3%BAsicas-Json)
+- [Personagens JSON](https://github.com/MariaCaetanoRizzo/flutter_filme_1/wiki/Personagens-Json)
