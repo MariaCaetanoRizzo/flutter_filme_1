@@ -35,3 +35,4 @@
 - [Créditos](https://github.com/MariaCaetanoRizzo/flutter_filme_1/wiki/Descri%C3%A7%C3%A3o-do-desenvolvimento#cr%C3%A9ditos)
 - [Músicas Json](https://github.com/MariaCaetanoRizzo/flutter_filme_1/wiki/M%C3%BAsicas-Json)
 - [Personagens JSON](https://github.com/MariaCaetanoRizzo/flutter_filme_1/wiki/Personagens-Json)
+- [História e Curiosidades Json](https://github.com/MariaCaetanoRizzo/flutter_filme_1/wiki/Hist%C3%B3ria-e-Curiosidades-Json)
